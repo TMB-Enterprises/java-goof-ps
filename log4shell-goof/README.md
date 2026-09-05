@@ -2,6 +2,8 @@
 
 The purpose of this project is to demonstrate the Log4Shell exploit with Log4J versions older than `2.15.0`.
 
+**NOTE**: Multiple additional vulnerabilities have been disclosed with log4j. Make sure you're using the latest `2.17.x` version.
+
 This repo is based on the excellent proof-of-concept published by [BrianV](https://github.com/bmvermeer/log4jexploit/).
 The PoC is a great starting point. This project expands on it by fleshing it out into a fully standalone demo.
 
@@ -39,7 +41,7 @@ Java class that will be deserialized and executed.
 
 The HTTP server listens on port `8000` and responds to any request with a byte array that is the `Evil.class`.
 
-`Evil` implements `ObjecFactory` which the JNDI mechanism hooks into to execute its `getObjectInstance` method. While
+`Evil` implements `ObjectFactory` which the JNDI mechanism hooks into to execute its `getObjectInstance` method. While
 the method simply returns `null`, it uses `Runtime` to execute arbitrary code on the host machine. In this case, it
 writes to a file called: `/tmp/pwned` to prove that it _could_ execute basically anything available on the machine.
 
@@ -49,7 +51,7 @@ Open a terminal window and run the following:
 
 ```
 cd log4shell-server
-mvn exec:java -Dexec.mainClass="Server"
+mvn exec:java
 ```
 
 You should see output that looks like the following:
@@ -65,7 +67,7 @@ In another terminal window, run the following:
 ```
 cd log4shell-client
 JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home \
-mvn exec:java -Dexec.mainClass="Main"
+mvn exec:java
 ```
 
 **NOTE:** Referencing `JAVA_HOME` is important as the exploit only fully works with older JDK versions.
